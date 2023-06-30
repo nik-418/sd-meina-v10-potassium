@@ -41,7 +41,7 @@ def handler(context: dict, request: Request) -> Response:
         negative_prompt=negative_prompt,
         guidance_scale=7,
         num_inference_steps=request.json.get("steps", 50),
-        generator=torch.Generator(device="cpu").manual_seed(request.json.get("seed")) if request.json.get("seed") else None,
+        generator=torch.Generator(device="cuda").manual_seed(request.json.get("seed")) if request.json.get("seed") else None,
         width=512,
         height=768,
     ).images[0]
