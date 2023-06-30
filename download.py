@@ -16,7 +16,7 @@ def download_model():
         use_safetensors=True,
         torch_dtype=torch.float16,
         scheduler=ddpm,
-        safety_checker = None,
+        # safety_checker = None,
     )
 
     # model_id = "stabilityai/stable-diffusion-x4-upscaler"
