@@ -17,8 +17,8 @@ def init():
         use_safetensors=True,
         torch_dtype=torch.float16,
         scheduler=ddpm,
-        safety_checker = None,
-    )
+        # safety_checker = None,
+    ).to("cuda")
 
     context = {
         "model": model,
@@ -30,8 +30,8 @@ def init():
 @app.handler()
 def handler(context: dict, request: Request) -> Response:
     model = context.get("model")
-    model.enable_xformers_memory_efficient_attention() # only on gpu
-    model.enable_sequential_cpu_offload() # without .to("cuda")
+    # model.enable_xformers_memory_efficient_attention() # only on gpu
+    # model.enable_sequential_cpu_offload() # without .to("cuda")
 
     prompt = request.json.get("prompt")
     negative_prompt = "(worst quality, low quality:1.4), monochrome, zombie, (interlocked fingers), cleavage, nudity, naked, nude"
@@ -40,7 +40,8 @@ def handler(context: dict, request: Request) -> Response:
         prompt=prompt,
         negative_prompt=negative_prompt,
         guidance_scale=7,
-        num_inference_steps=25,
+        num_inference_steps=request.json.get("steps", 50),
+        generator=torch.Generator(device="cpu").manual_seed(request.json.get("seed")) if request.json.get("seed") else None,
         width=512,
         height=768,
     ).images[0]
@@ -50,7 +51,7 @@ def handler(context: dict, request: Request) -> Response:
     img_str = base64.b64encode(buffered.getvalue())
 
     return Response(
-        json = {"output": img_str}, 
+        json = {"output": str(img_str, "utf-8")}, 
         status=200
     )
 
