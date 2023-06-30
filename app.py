@@ -1,6 +1,8 @@
+from io import BytesIO
 from potassium import Potassium, Request, Response
 from diffusers import DiffusionPipeline, DDPMScheduler
 import torch
+import base64
 
 app = Potassium("my_app")
 
@@ -43,13 +45,12 @@ def handler(context: dict, request: Request) -> Response:
         height=768,
     ).images[0]
 
-    # save image to jpg file
-    image.save("image.jpg")
-
-    outputs = model(prompt)
+    buffered = BytesIO()
+    image.save(buffered, format="JPEG", quality=80)
+    img_str = base64.b64encode(buffered.getvalue())
 
     return Response(
-        json = {"outputs": outputs[0]}, 
+        json = {"output": img_str}, 
         status=200
     )
 
