@@ -15,10 +15,13 @@ def init():
     model = DiffusionPipeline.from_pretrained(
         repo_id, 
         use_safetensors=True,
-        torch_dtype=torch.float16,
+        # torch_dtype=torch.float16,
         scheduler=ddpm,
         # safety_checker = None,
     ).to("cuda")
+    #model.to("mps")
+
+    # model.enable_xformers_memory_efficient_attention() # only on gpu
 
     context = {
         "model": model,
@@ -30,8 +33,6 @@ def init():
 @app.handler()
 def handler(context: dict, request: Request) -> Response:
     model = context.get("model")
-    # model.enable_xformers_memory_efficient_attention() # only on gpu
-    # model.enable_sequential_cpu_offload() # without .to("cuda")
 
     prompt = request.json.get("prompt")
     negative_prompt = "(worst quality, low quality:1.4), monochrome, zombie, (interlocked fingers), cleavage, nudity, naked, nude"

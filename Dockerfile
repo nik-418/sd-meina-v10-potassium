@@ -15,11 +15,9 @@ RUN pip3 install --upgrade pip
 
 RUN pip3 install \
     potassium \
-    torch \
     transformers \
     diffusers[torch] \
-    accelerate \
-    xformers
+    accelerate
 
 # Add your model weight files 
 # (in this case we have a python script)

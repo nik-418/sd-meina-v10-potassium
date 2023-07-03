@@ -1,6 +1,6 @@
 potassium
-torch
+# torch
 transformers
 diffusers[torch]
 accelerate
-xformers
+# xformers
