@@ -15,7 +15,7 @@ def init():
     model = DiffusionPipeline.from_pretrained(
         repo_id, 
         use_safetensors=True,
-        # torch_dtype=torch.float16,
+        torch_dtype=torch.float16,
         scheduler=ddpm,
         # safety_checker = None,
     ).to("cuda")
